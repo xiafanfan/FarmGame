@@ -270,6 +270,24 @@ handlers.accelerate = try_catch(function (args, context) {
     }
     return { Result: "accelerate OK" };
 });
+//update leaderboard
+handlers.PopulateLeaderboard = try_catch(function (args, context) {
+    let getUserInventoryRequest = {
+        PlayFabId: currentPlayerId,
+    };
+    let result = server.GetUserInventory(getUserInventoryRequest);
+    if (result && result.VirtualCurrency) {
+        server.UpdatePlayerStatistics({
+            PlayFabId: currentPlayerId,
+            Statistics: [
+                {
+                    "StatisticName": "GD",
+                    "Value": result.VirtualCurrency.GD,
+                }
+            ]
+        });
+    }
+});
 handlers.helloWorld = try_catch(function (args, context) {
     let message = "Hello " + currentPlayerId + "!";
     log.info(message);
